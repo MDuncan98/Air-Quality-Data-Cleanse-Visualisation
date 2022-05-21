@@ -1,0 +1,121 @@
+<html>
+    <head>
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="/resources/demos/style.css">
+        <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+        <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+        <link rel="stylesheet" type="text/css" href="./style.css" />
+        <script>
+            $( function() {
+                $( "#datepicker" ).datepicker({ minDate: new Date(2015, 1 - 1, 1), maxDate: new Date(2019,11,31) });
+            } );
+        </script>
+    </head>
+    <body>
+        <h2>Air Quality Visualiser</h2>
+        <div id="legend">
+            <h3>Legend:</h3>
+            No data: <img src="http://maps.google.com/mapfiles/ms/icons/blue-dot.png"> 
+            Low pollution: <img src="http://maps.google.com/mapfiles/ms/icons/green-dot.png">
+            Medium pollution: <img src="http://maps.google.com/mapfiles/ms/icons/orange-dot.png"> 
+            High pollution: <img src="http://maps.google.com/mapfiles/ms/icons/red-dot.png">
+        </div>
+        <br/>
+        <div id="dateselect">
+            <form method="POST" action="search.php" autocomplete="off">
+                Select a Date: <input required type="text/javascript" id="datepicker" name="datepicker">
+                Time: 
+                <select name="time" id="time">
+                    <option>08:00</option>
+                    <option>12:00</option>
+                    <option>16:00</option>
+                    <option>18:00</option>
+                    <option>22:00</option>
+                </select>
+                Pollutant:
+                <select name="pollutant" id="pollutant">
+                    <option>nox</option>
+                    <option>no</option>
+                    <option>no2</option>
+                </select>
+                <button type=submit>Show</button>
+            </form>
+        </div>
+        <div id="map"></div>
+        <script>
+        var locations = [
+            [51.45720412, -2.585649141], //188
+            [51.44174718, -2.559955832], //203
+            [51.4554332, -2.596262373], //206
+            [51.47528476, -2.562079983], //209
+            [51.456019, -2.58348949], //213
+            [51.43267571, -2.604956657], //215
+            [51.4488837, -2.584477762], //228
+            [51.42786389, -2.563741533], //270
+            [51.48999346, -2.688778569], //271
+            [51.46067382, -2.582253418], //375
+            [51.45779303, -2.5627142], //395
+            [51.44253727, -2.571375361], //447
+            [51.46282942, -2.584540816], //452
+            [51.46893859, -2.592724167], //459
+            [51.47804497, -2.535230275], //463
+            [51.45794971, -2.58398909], //500
+            [51.45526938, -2.596648829] //501
+        ];
+        //source: https://developers.google.com/maps/documentation/javascript/overview#maps_map_simple-javascript
+        let map;
+        let markersArray = [];
+        function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 51.454514, lng: -2.587910 },
+                zoom: 12,
+            });
+            for(i=0;i<locations.length; i++) {
+                colour = "blue";
+                let value = parseFloat(localStorage.getItem("value" + i.toString()) ?? 0.0);
+                let pollutant = localStorage.getItem("pollutant");
+                if (value == 0) {
+                    //addMarker({lat: locations[i][0], lng: locations[i][1]}, "blue");
+                } else {
+                    if (pollutant == "nox") {
+                        if (value < 150) { colour = "green"; } else
+                        if (value < 300) { colour = "orange"; } 
+                        else { colour = "red"; }
+                        addMarker({lat: locations[i][0], lng: locations[i][1]}, colour);
+                    //https://www.gov.uk/government/statistics/air-quality-statistics/ntrogen-dioxide#:~:text=The%20Air%20Quality%20Standards%20Regulations,3)%20in%20a%20single%20year.
+                    } else if (pollutant == "no2") {
+                        if (value < 100) { colour = "green"; } else
+                        if (value < 200) { colour = "orange"; } 
+                        else { colour = "red"; }
+                        addMarker({lat: locations[i][0], lng: locations[i][1]}, colour);
+                    } else if (pollutant == "no") {
+                        if (value < 50) { colour = "green"; } else
+                        if (value < 100) { colour = "orange"; } 
+                        else { colour = "red"; }
+                        addMarker({lat: locations[i][0], lng: locations[i][1]}, colour);
+                    }
+                }
+            }
+        }
+        //source: https://gist.github.com/getsudocode/605bf60f5de40eb3f6b00addd93c913d
+        function addMarker(latLng, colour) {
+            let url = "http://maps.google.com/mapfiles/ms/icons/";
+            //https://sites.google.com/site/gmapsdevelopment/
+            url += colour + "-dot.png";
+            
+            let marker = new google.maps.Marker({
+               map: map,
+               position: latLng,
+               icon: {
+                   url: url,
+                   //scaledSize: new google.maps.Size(x, y)
+               }
+            });
+            markersArray.push(marker);
+        }
+        window.initMap = initMap;
+    </script>
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9MRhIGSNDon46Yfy1Vi52fvJlzqeVbp8&callback=initMap"></script>
+    </body>
+</html>

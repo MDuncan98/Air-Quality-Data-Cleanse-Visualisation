@@ -1,0 +1,17 @@
+#map {
+    height: 100%;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#legend {
+    width: 50%;
+    max-width: 550px;
+    padding: 10;
+    outline-style: solid;
+    outline-color: black;
+}

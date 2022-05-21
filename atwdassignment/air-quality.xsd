@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="station">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="rec"/>
+      </xs:sequence>
+      <xs:attribute name="geocode" use="required"/>
+      <xs:attribute name="id" use="required" type="xs:integer"/>
+      <xs:attribute name="name" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="rec">
+    <xs:complexType>
+      <xs:attribute name="no">
+        <xs:simpleType>
+        <xs:restriction base="xs:decimal">
+          <xs:minInclusive value="0"/>
+          <xs:maxInclusive value="1250"/>
+        </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="no2">
+        <xs:simpleType>
+          <xs:restriction base="xs:decimal">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="600"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="nox">
+        <xs:simpleType>
+          <xs:restriction base="xs:decimal">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="2200"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="ts" use="required" type="xs:integer"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

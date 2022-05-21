@@ -1,0 +1,105 @@
+<html>
+    <head>
+        <script type= "text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript">
+            if (localStorage.getItem('type') == 'scatter') { // If scatter chart is being drawn
+                //assignment of variables
+                var station = localStorage.station;
+                var bound = localStorage.bound;
+                var year = localStorage.year;
+                var time = localStorage.time;
+                var data1 = parseFloat(localStorage.data1);
+                var data2 = parseFloat(localStorage.data2);
+                var data3 = parseFloat(localStorage.data3);
+                var data4 = parseFloat(localStorage.data4);
+                var data5 = parseFloat(localStorage.data5);
+                var data6 = parseFloat(localStorage.data6);
+                var data7 = parseFloat(localStorage.data7);
+                var data8 = parseFloat(localStorage.data8);
+                var data9 = parseFloat(localStorage.data9);
+                var data10 = parseFloat(localStorage.data10);
+                var data11 = parseFloat(localStorage.data11);
+                var data12 = parseFloat(localStorage.data12);   
+                
+                //load google charts packages
+                google.charts.load('current', {'packages':['corechart']});
+                google.charts.setOnLoadCallback(drawChart);
+                
+                //draw the chart
+                function drawChart() {
+                    var data = google.visualization.arrayToDataTable([
+                        ['Month', 'CO'],
+                        ['January', data1],
+                        ['February', data2],
+                        ['March', data3],
+                        ['April', data4],
+                        ['May', data5],
+                        ['June', data6],
+                        ['July', data7],
+                        ['August', data8],
+                        ['September', data9],
+                        ['October', data10],
+                        ['November', data11],
+                        ['December', data12]
+                    ]);
+
+                    var options = {
+                        title: 'Air Quality Data (Station ' + station + ', ' + year + ', ' + time + ')',
+                        hAxis: {title: 'Month'},
+                        vAxis: {title: 'NO', minValue:0, maxValue: bound},
+                        legend: 'none'
+                    };
+
+                    var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+
+                    chart.draw(data, options);
+                }
+            } else if (localStorage.getItem("type") == "line") { // If line chart is being drawn
+                var counter = localStorage.counter;
+                var station = localStorage.station;
+                var date = localStorage.date;                
+                var bound = localStorage.bound;
+                var pollutant = localStorage.pollutant;
+                var dataArray = [];
+                //https://www.w3schools.com/jsref/met_storage_getitem.asp
+                for (let i = 0; i < counter; i++) {
+                    key = "data";
+                    key = key.concat(i.toString());
+                    dataArray.push(parseFloat(localStorage.getItem(key)));
+                }
+              // source: https://developers.google.com/chart/interactive/docs/datatables_dataviews#emptytable
+              google.charts.load('current', {'packages':['corechart']});
+              google.charts.setOnLoadCallback(drawChart);
+
+              function drawChart() {
+                var data = new google.visualization.DataTable();
+                data.addColumn('string', 'entry');
+                data.addColumn('number', pollutant);
+                //source: https://stackoverflow.com/questions/15869232/create-google-chart-data-table-array-from-two-arrays
+                for(i=0;i<dataArray.length;i++) {
+                    data.addRow([i.toString(), dataArray[i]]);
+                }
+                //convert to BST, source: https://stackoverflow.com/questions/1050720/how-to-add-hours-to-a-date-object
+                Date.prototype.addHours = function(h) {
+                    this.setTime(this.getTime() + (h*60*60*1000));
+                    return this;
+                }
+                date = new Date(date * 1000).addHours(1);
+                date = date.toDateString();
+                  
+                var options = {
+                  title: 'Air Quality Data, ' + pollutant + ' value on ' + date,
+                  legend: { position: 'bottom' }
+                };
+
+                var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+
+                chart.draw(data, options);
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <div id="chart_div" style="width: 1200px; height: 500px;"></div>
+    </body>
+</html>
